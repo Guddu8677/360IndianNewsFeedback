@@ -2,9 +2,22 @@
 """
 Django settings for news360 project.
 """
+
+
+
+
 from decouple import config
 
 from pathlib import Path
+
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
