@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - News360{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>🔐 Welcome Back!</h3>
+            <p class="mb-0 mt-2">Login to continue reading news</p>
+        </div>
+        <div class="card-body">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>❌ Error!</strong> Invalid username or password.
+                </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required id="id_username" placeholder="Enter your username" autofocus>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required id="id_password" placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    🚀 Login
+                </button>
+                
+                <input type="hidden" name="next" value="{{ next }}">
+            </form>
+            
+            <hr>
+            <p class="text-center mb-0">
+                Don't have an account? <a href="{% url 'accounts:signup' %}" class="fw-bold">Sign up here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

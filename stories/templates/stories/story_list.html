@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Live News from India{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1 class="display-4">📰 Live News from India</h1>
+        <p class="lead">Real-time news updates from trusted sources across India</p>
+    </div>
+</div>
+
+
+<div class="search-container">
+    <div class="row">
+        <div class="col-md-8 mb-3 mb-md-0">
+            <form method="get" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="🔍 Search news..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" onchange="window.location.href='?category=' + this.value">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>
+                        {{ cat|title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<div class="category-pills">
+    <a href="?" class="btn btn-sm btn-outline-primary {% if not category %}active{% endif %}">All</a>
+    {% for cat in categories %}
+        <a href="?category={{ cat }}" class="btn btn-sm btn-outline-primary {% if category == cat %}active{% endif %}">
+            {{ cat|title }}
+        </a>
+    {% endfor %}
+</div>
+
+
+{% if live_articles %}
+<div class="mb-5">
+    <div class="section-header">
+        <span class="badge bg-danger">LIVE</span>
+        <h2>Latest Updates</h2>
+    </div>
+    
+    <div class="row">
+        {% for article in live_articles %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card story-card live-news-card h-100">
+                    {% if article.urlToImage %}
+                        <img src="{{ article.urlToImage }}" class="news-image" alt="{{ article.title }}" onerror="this.style.display='none'">
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <span class="badge bg-danger">LIVE</span>
+                            <small class="text-muted ms-2">{{ article.source.name }}</small>
+                        </div>
+                        
+                        <h5 class="card-title">
+                            {{ article.title }}
+                        </h5>
+                        
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ article.description|truncatechars:120 }}
+                        </p>
+                        
+                        <div class="story-meta mt-auto">
+                            {% if article.author %}
+                                <small class="text-muted d-block mb-1">
+                                    <strong>✍️ {{ article.author|truncatechars:30 }}</strong>
+                                </small>
+                            {% endif %}
+                            <small class="text-muted d-block mb-3">
+                                📅 {{ article.publishedAt|slice:":10" }}
+                            </small>
+                            <div class="d-flex gap-2">
+                                <form method="get" action="{% url 'stories:live_article_detail' %}" class="w-100">
+                                    <input type="hidden" name="url" value="{{ article.url }}">
+                                    <input type="hidden" name="title" value="{{ article.title }}">
+                                    <input type="hidden" name="source" value="{{ article.source.name }}">
+                                    <input type="hidden" name="description" value="{{ article.description|default:'' }}">
+                                    <input type="hidden" name="image" value="{{ article.urlToImage|default:'' }}">
+                                    <input type="hidden" name="author" value="{{ article.author|default:'' }}">
+                                    <input type="hidden" name="published" value="{{ article.publishedAt|default:'' }}">
+                                    <input type="hidden" name="content" value="{{ article.content|default:'' }}">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                                        📖 Read Full Article
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+{% if db_stories %}
+<div class="mb-5">
+    <div class="section-header">
+        <h2>📚 Archived Stories</h2>
+    </div>
+    
+    <div class="row">
+        {% for story in db_stories %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card story-card h-100">
+                    {% if story.image_url %}
+                        <img src="{{ story.image_url }}" class="news-image" alt="{{ story.title }}" onerror="this.style.display='none'">
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            {% if story.is_live %}
+                                <span class="badge bg-success">Saved</span>
+                            {% endif %}
+                            <small class="text-muted ms-2">{{ story.source }}</small>
+                        </div>
+                        
+                        <h5 class="card-title">
+                            <a href="{% url 'stories:story_detail' story.id %}">
+                                {{ story.title }}
+                            </a>
+                        </h5>
+                        
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ story.summary|truncatechars:120 }}
+                        </p>
+                        
+                        <div class="story-meta mt-auto">
+                            <small class="text-muted d-block mb-2">
+                                📅 {{ story.published_at|date:"M d, Y" }}
+                            </small>
+                            <div class="mb-3">
+                                <span class="badge bg-primary">
+                                    💬 {{ story.feedbacks.count }} feedback
+                                </span>
+                            </div>
+                            <a href="{% url 'stories:story_detail' story.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                📖 Read & Give Feedback
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if not live_articles and not db_stories %}
+    <div class="empty-state">
+        <h5>📭 No news found</h5>
+        <p>Try searching for different keywords or check back later for updates.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

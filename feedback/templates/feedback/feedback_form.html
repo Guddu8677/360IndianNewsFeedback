@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Feedback{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Submit Your Feedback</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Story:</strong> {{ story.title }}
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.rating.id_for_label }}" class="form-label">{{ form.rating.label }}</label>
+                        {{ form.rating }}
+                        {% if form.rating.errors %}
+                            <div class="text-danger">{{ form.rating.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.bias.id_for_label }}" class="form-label">{{ form.bias.label }}</label>
+                        {{ form.bias }}
+                        {% if form.bias.errors %}
+                            <div class="text-danger">{{ form.bias.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        {{ form.accuracy_flag }}
+                        <label class="form-check-label" for="{{ form.accuracy_flag.id_for_label }}">
+                            {{ form.accuracy_flag.label }}
+                        </label>
+                        {% if form.accuracy_flag.errors %}
+                            <div class="text-danger">{{ form.accuracy_flag.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.tags.id_for_label }}" class="form-label">{{ form.tags.label }}</label>
+                        {{ form.tags }}
+                        <small class="form-text text-muted">{{ form.tags.help_text }}</small>
+                        {% if form.tags.errors %}
+                            <div class="text-danger">{{ form.tags.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.comment.id_for_label }}" class="form-label">{{ form.comment.label }}</label>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                            <div class="text-danger">{{ form.comment.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="/stories/{{ story.id }}/" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
