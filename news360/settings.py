@@ -32,7 +32,8 @@ NEWS_API_KEY = config('NEWS_API_KEY', default='')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['three60indiannewsfeedback.onrender.com', 'localhost', '127.0.0.1']
+
 
 # Application definition
 
